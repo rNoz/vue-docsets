@@ -7,25 +7,27 @@ const lib = process.argv[2];
 
 const build = {
   quasar: require('../src/quasar'),
-}
+  vuelidate: require('../src/vuelidate'),
+};
 const wip = 'wip';
-const docsets = 'docsets';
 
+function getResources(docset){
+  return path.join('docsets', `${docset}.docset`, 'Contents/Resources');
+}
 
 function createDatabase(docset, categories) {
-  const dbPath = path.join(docset, 'Contents/Resources/docSet.dsidx');
+  const dbPath = path.join(getResources(docset), 'docSet.dsidx');
 
   if (fs.existsSync(dbPath)) {
     fs.unlinkSync(dbPath);
   }
 
-// Initialize DB
+  // Initialize DB
   const db = new sqlite3.Database(dbPath);
 
   function insertQuery({ name, path, type }) {
     return `INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ("${name}", "${type}", "${path}");`;
   }
-  // console.log(categories)
 
   db.serialize(() => {
     db.run(
@@ -61,12 +63,18 @@ function createDatabase(docset, categories) {
   });
 }
 
-
-switch(lib){
+let categories, docset;
+switch(lib) {
   case 'quasar':
-    const categories = build.quasar.getList(path.join(wip, lib));
-    const docset = path.join(docsets, 'quasar.docset')
-    createDatabase(docset, categories)
+    categories = build[lib].getList(path.join(wip, lib));
+    createDatabase(lib, categories);
+    break;
+  case 'vuelidate':
+    const documents = path.join(getResources(lib), 'Documents');
+    build[lib].getList(documents).then((categories) => {
+      // docset = path.join(docsets, 'vuelidate.docset');
+      createDatabase(lib, categories);
+    });
     break;
 }
 

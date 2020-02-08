@@ -1,6 +1,6 @@
 {
   "name": "vue-docsets",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
@@ -19,7 +19,6 @@
     "toc-vuex": "node ./scripts/createToc.js vuex",
     "toc-vue-router": "node ./scripts/createToc.js vue-router",
     "toc-vue-test-utils": "node ./scripts/createToc.js vue-test-utils",
-    "build-quasar": "node ./scripts/createDatabase.js quasar",
     "build-vuex": "node ./scripts/createDatabase.js vuex",
     "build-vue-router": "node ./scripts/createDatabase.js vue-router",
     "build-vue-test-utils": "node ./scripts/createDatabase.js vue-test-utils"

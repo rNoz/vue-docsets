@@ -1,15 +1,14 @@
 # Vue Docsets
 
-Project to make a Dash-compatible docsets for:
+Project to make a Zeal/Dash-compatible docsets for:
 
-* Vue Router
-* Vuex
-* vue-test-utils
-* Quasar
+- Vue Router
+- Vuex
+- vue-test-utils
+- Quasar
+- Vuelidate
 
-Based on the [vue-libs-dash-docs](https://github.com/jonboiser/vue-libs-dash-docs) repo.
-
-Created to integrate Quasar.
+Created to integrate Quasar and Vuelidate.
 
 ## Usage
 
@@ -18,6 +17,9 @@ Create the quasar docs and populate them:
 ```sh
 bash scripts/manager.sh quasar
 rsync -rav docsets/quasar.docset ~/.local/share/Zeal/Zeal/docsets/
+
+bash scripts/manager.sh vuelidate
+rsync -rav docsets/vuelidate.docset ~/.local/share/Zeal/Zeal/docsets/
 ```
 
 ## Guide
@@ -105,5 +107,3 @@ Finally, building the database:
 ```
 npm run docset-quasar
 ```
-
-## Vuelidate

@@ -14,6 +14,11 @@ function fetch_repo {
         cd "$WIP/$1"
         svn export https://github.com/quasarframework/quasar/trunk/docs
       ;;
+      vualidate)
+        mkdir -p "$WIP/$1"
+        cd "$WIP/$1"
+        svn export https://github.com/vuelidate/vuelidate/branches/gh-pages
+      ;;
     esac
   else
     case "$1" in
@@ -31,12 +36,23 @@ function fetch_repo {
         # git pull origin master
         cd ../..
       ;;
+      vuelidate)
+        cd "$WIP/$1"
+        if [[ -d gh-pages ]]; then
+          rm -r gh-pages
+        fi
+        svn export https://github.com/vuelidate/vuelidate/branches/gh-pages
+        cd ../..
+      ;;
     esac
   fi
 }
 
 ### Build documents (html, js, css) and icon
 function build_documents_icon {
+  DOCSET="docsets/$1.docset"
+  RES="$DOCSET/Contents/Resources"
+  DOCS="$RES/Documents"
   case "$1" in
     quasar)
       # TODO: create a patch and check before applying the changes
@@ -45,15 +61,26 @@ function build_documents_icon {
       npm i
       node_modules/.bin/quasar build
       cd ../../..
-      DOCSET=docsets/quasar.docset
-      RES="$DOCSET/Contents/Resources"
       mkdir -p $RES
-      DOCS="$RES/Documents"
       if [[ -f "$DOCS/index.html" ]]; then
         rm -r $DOCS
       fi
       mv "$WIP/$1/docs/dist/quasar.dev" $DOCS
       cp "$WIP/$1/docs/node_modules/@quasar/app/templates/electron/icons/linux-512x512.png" $DOCSET/icon.png
+    ;;
+    vuelidate)
+      mkdir -p $RES
+      if [[ -f "$DOCS/index.html" ]]; then
+        rm -r $DOCS
+      fi
+      mv "$WIP/$1/gh-pages" $DOCS
+      icon1=docsets/vuetest.docset/icon.png
+      icon2=docsets/vuerouter.docset/icon.png
+      if [[ -f "$icon1" ]]; then
+        cp "$icon1" $DOCSET/icon.png
+      elif [[ -f "$icon2" ]]; then
+        cp "$icon2" $DOCSET/icon.png
+      fi
     ;;
   esac
 }
@@ -64,16 +91,23 @@ function build_database {
     quasar)
       node scripts/database.js quasar
     ;;
+    vuelidate)
+      node scripts/database.js vuelidate
+    ;;
   esac
 }
 
 ### Build other assets like Info.plist
 function build_assets {
+  DOCSET="docsets/$1.docset"
   case "$1" in
     quasar)
       search=$1
       name=Quasar
-      DOCSET=docsets/quasar.docset
+      ;;
+    vuelidate)
+      search=$1
+      name=Vuelidate
       ;;
   esac
   CONTS="$DOCSET/Contents"
@@ -108,9 +142,15 @@ WIP=wip
 
 case "$1" in
   quasar)
-#    fetch_repo $1
-#    build_documents_icon $1
+    fetch_repo $1
+    build_documents_icon $1
     build_database $1
-#    build_assets $1
+    build_assets $1
+  ;;
+  vuelidate)
+    fetch_repo $1
+    build_documents_icon $1
+    build_database $1
+    build_assets $1
   ;;
 esac
