@@ -11,7 +11,20 @@ Based on the [vue-libs-dash-docs](https://github.com/jonboiser/vue-libs-dash-doc
 
 Created to integrate Quasar.
 
-## Quasar
+## Usage
+
+Create the quasar docs and populate them:
+
+```sh
+bash scripts/manager.sh quasar
+rsync -rav docsets/quasar.docset ~/.local/share/Zeal/Zeal/docsets/
+```
+
+## Guide
+
+This section was used originally. Please, see the usage section.
+
+### Quasar
 
 ```
 git clone --depth 1 https://github.com/quasarframework/quasar/
@@ -92,3 +105,5 @@ Finally, building the database:
 ```
 npm run docset-quasar
 ```
+
+## Vuelidate
