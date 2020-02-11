@@ -7,12 +7,26 @@ Project to make a Zeal/Dash-compatible docsets for:
 - vue-test-utils
 - Quasar
 - Vuelidate
+- Vue Testing Handbook
+- Vue Test
 
 Created to integrate Quasar and Vuelidate.
 
+- Vue Test contains:
+  - Vue Test Utils (Utils namespace)
+  - Vue Testing Hanbook (Handbook namespace)
+
+> **NOTE**
+>
+> Some of these repos are made with Vuepress. Due to the lack of compatibility to build
+> for offline usage (relative paths, no server) it has been a nightmare to support (port)
+> these docs in Zeal
+>
+> We hope the Vuepress Team implement an official building mode for offline usage.
+
 ## Usage
 
-Create the quasar docs and populate them:
+Create the docs and populate them:
 
 ```sh
 bash scripts/manager.sh quasar
@@ -20,6 +34,9 @@ rsync -rav docsets/quasar.docset ~/.local/share/Zeal/Zeal/docsets/
 
 bash scripts/manager.sh vuelidate
 rsync -rav docsets/vuelidate.docset ~/.local/share/Zeal/Zeal/docsets/
+
+bash scripts/manager.sh vue-test
+rsync -rav docsets/vue-test.docset ~/.local/share/Zeal/Zeal/docsets/
 ```
 
 ## Guide

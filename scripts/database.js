@@ -8,7 +8,7 @@ const lib = process.argv[2];
 const build = {
   quasar: require('../src/quasar'),
   vuelidate: require('../src/vuelidate'),
-  vuetesting: require('../src/vuetesting'),
+  'vue-test': require('../src/vue-test'),
 };
 const wip = 'wip';
 
@@ -16,10 +16,10 @@ function getResources(docset){
   return path.join('docsets', `${docset}.docset`, 'Contents/Resources');
 }
 
-function createDatabase(docset, categories) {
+function createDatabase(docset, categories, append) {
   const dbPath = path.join(getResources(docset), 'docSet.dsidx');
 
-  if (fs.existsSync(dbPath)) {
+  if (fs.existsSync(dbPath) && !append) {
     fs.unlinkSync(dbPath);
   }
 
@@ -32,9 +32,9 @@ function createDatabase(docset, categories) {
 
   db.serialize(() => {
     db.run(
-      'CREATE TABLE searchIndex(id INTEGER PRIMARY KEY, name TEXT, type TEXT, path TEXT);',
+      'CREATE TABLE IF NOT EXISTS searchIndex(id INTEGER PRIMARY KEY, name TEXT, type TEXT, path TEXT);',
     );
-    db.run('CREATE UNIQUE INDEX anchor ON searchIndex (name, type, path);');
+    db.run('CREATE UNIQUE INDEX IF NOT EXISTS anchor ON searchIndex (name, type, path);');
 
     ramda.forEachObjIndexed(function(value, key) {
       let { skip, name, path, type } = value;
@@ -64,7 +64,7 @@ function createDatabase(docset, categories) {
   });
 }
 
-let categories, docset, documents;
+let categories, docset, documents, toc, subdir;
 switch(lib) {
   case 'quasar':
     categories = build[lib].getList(path.join(wip, lib));
@@ -77,13 +77,26 @@ switch(lib) {
       createDatabase(lib, categories);
     });
     break;
-  case 'vuetesting':
-    documents = path.join(getResources(lib), 'Documents', 'vue-testing-handbook');
-    console.log(documents)
-    build[lib].getList(documents).then((categories) => {
+  case 'vue-test':
+    createDatabase(lib, []); // new database
+
+    // documents = path.join(getResources(lib), 'Documents', 'vue-testing-handbook');
+    subdir = 'vue-test-utils';
+    documents = path.join(getResources(lib), 'Documents', subdir);
+    toc = path.join(wip, lib, 'vue-test-utils', 'toc.js');
+    build[lib].getList(documents, toc, subdir).then((categories) => {
       // docset = path.join(docsets, 'vuelidate.docset');
-      console.log(categories)
-      createDatabase(lib, categories);
+      // console.log(categories)
+      createDatabase(lib, categories, true);
+    });
+
+    subdir = 'vue-testing-handbook';
+    documents = path.join(getResources(lib), 'Documents', subdir);
+    toc = path.join(wip, lib, 'vue-testing-handbook', 'toc.js');
+    build[lib].getList(documents, toc, subdir).then((categories) => {
+      // docset = path.join(docsets, 'vuelidate.docset');
+      // console.log(categories)
+      createDatabase(lib, categories, true);
     });
     break;
 }

@@ -1,0 +1,107 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Vue Test</title>
+  <meta name="description" content="Vue Test">
+  <meta name="author" content="rNoz">
+
+  <style>
+    a {
+      display: block;
+      /*color: #888;*/
+      font-weight: bold;
+      text-decoration: none;
+      font-family: "Arial";
+      font-size: 30px;
+      /*padding: 50px;*/
+      background: #fafafa;
+      border: 2px solid #3eaf7c;
+      border-radius: 5px;
+      color: #3eaf7c;
+    }
+
+    *,
+    :before,
+    :after {
+      box-sizing: border-box;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0) translateY(50%);
+      }
+      90% {
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .super {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: calc(100vh - 1rem);
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      display: grid;
+      grid-template-columns: auto auto;
+    }
+
+    @media screen and (max-width: 1000px) {
+      .container {
+        grid-template-columns: auto;
+      }
+    }
+
+    .card {
+      position: relative;
+      margin: 1rem;
+      transition: all .3s ease-in-out;
+      text-align: center;
+    }
+
+    .card.fixed {
+      width: 20em;
+    }
+
+    .card.fixed > a {
+      min-height: 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card:hover {
+      box-shadow: 0 10px 20px 10px #ddd;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="super">
+  <div class="container">
+    <article class="card fixed">
+      <a href="vue-test-utils/index.html">Vue Test Utils</a>
+    </article>
+    <article class="card fixed">
+      <a href="vue-testing-handbook/index.html">Vue Testing Handbook</a>
+    </article>
+  </div>
+</div>
+
+
+</body>
+</html>

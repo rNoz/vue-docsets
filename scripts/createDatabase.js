@@ -21,7 +21,7 @@ const db = new sqlite3.Database(dbPath);
 function insertQuery({ name, path, type }) {
   return `INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ("${name}", "${type}", "${path}");`;
 }
-console.log(categories)
+// console.log(categories)
 
 db.serialize(() => {
   db.run(

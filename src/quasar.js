@@ -4,7 +4,7 @@ const Path = require('path');
 const parseNode = require('./common').parseNode;
 
 function getList(dir){
-  const menuFile = Path.join(dir, 'docs/src/assets/menu');
+  const menuFile = Path.join(dir, 'src/assets/menu');
   const menu = require(Path.join('..', menuFile));
   const list = [];
 
