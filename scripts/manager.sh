@@ -19,6 +19,13 @@ function fetch_repo {
         cd "$WIP/$1"
         svn export https://github.com/vuelidate/vuelidate/branches/gh-pages
       ;;
+      vuetesting)
+        mkdir -p "$WIP/$1"
+        cd "$WIP/$1"
+        subdir=vue-testing-handbook
+        svn export --force --depth immediates https://github.com/lmiller1990/vue-testing-handbook/trunk/ $subdir
+        svn export --force https://github.com/lmiller1990/vue-testing-handbook/trunk/src $subdir/src
+      ;;
     esac
   else
     case "$1" in
@@ -42,6 +49,17 @@ function fetch_repo {
           rm -r gh-pages
         fi
         svn export https://github.com/vuelidate/vuelidate/branches/gh-pages
+        cd ../..
+      ;;
+      vuetesting)
+        mkdir -p "$WIP/$1"
+        cd "$WIP/$1"
+        subdir=vue-testing-handbook
+        if [[ -d $subdir ]]; then
+          rm -r $subdir
+        fi
+        svn export --force --depth immediates https://github.com/lmiller1990/vue-testing-handbook/trunk/ $subdir
+        svn export --force https://github.com/lmiller1990/vue-testing-handbook/trunk/src $subdir/src
         cd ../..
       ;;
     esac
@@ -82,6 +100,35 @@ function build_documents_icon {
         cp "$icon2" $DOCSET/icon.png
       fi
     ;;
+    vuetesting)
+      subdir=vue-testing-handbook
+      cp assets/vuetesting/vue-testing-handbook/src/.vuepress/vuepress-plugin-extract-toc.js "$WIP/$1/$subdir/src/.vuepress/"
+      cp assets/vuetesting/vue-testing-handbook/src/.vuepress/config.js "$WIP/$1/$subdir/src/.vuepress/"
+      cp assets/vuetesting/vue-testing-handbook/src/.vuepress/theme/components/Sidebar.vue "$WIP/$1/$subdir/src/.vuepress/theme/components/"
+
+      cd "$WIP/$1/$subdir"
+      npm i
+      rm -rf src/{ja,ko,ru,zh,zh-CN}
+      node_modules/.bin/vuepress build src
+      fd -I .html src/.vuepress/dist --exec sed -i 's|https://lmiller1990.github.io/vue-testing-handbook/||g;s|href="/|href="|g;s|src="/|src="|g;s|href=""|href="index.html"|' {}
+      cd ../../..
+
+      mkdir -p $RES
+      mkdir -p $DOCS
+      if [[ -d "$DOCS/$subdir" ]]; then
+        rm -r $DOCS/$subdir
+      fi
+      mv "$WIP/$1/$subdir/src/.vuepress/dist" $DOCS/$subdir
+      # cover
+      cp assets/vuetesting/index.html "$DOCS/index.html"
+      icon1=docsets/vuetest.docset/icon.png
+      icon2=docsets/vuerouter.docset/icon.png
+      if [[ -f "$icon1" ]]; then
+        cp "$icon1" $DOCSET/icon.png
+      elif [[ -f "$icon2" ]]; then
+        cp "$icon2" $DOCSET/icon.png
+      fi
+    ;;
   esac
 }
 
@@ -93,6 +140,9 @@ function build_database {
     ;;
     vuelidate)
       node scripts/database.js vuelidate
+    ;;
+    vuetesting)
+      node scripts/database.js vuetesting
     ;;
   esac
 }
@@ -108,6 +158,13 @@ function build_assets {
     vuelidate)
       search=$1
       name=Vuelidate
+      ;;
+    vuetesting)
+      search=$1
+      name=Vuetesting
+      ;;
+    *)
+      return
       ;;
   esac
   CONTS="$DOCSET/Contents"
@@ -150,6 +207,12 @@ case "$1" in
   vuelidate)
     fetch_repo $1
     build_documents_icon $1
+    build_database $1
+    build_assets $1
+  ;;
+  vuetesting)
+#    fetch_repo $1
+#    build_documents_icon $1
     build_database $1
     build_assets $1
   ;;

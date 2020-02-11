@@ -8,6 +8,7 @@ const lib = process.argv[2];
 const build = {
   quasar: require('../src/quasar'),
   vuelidate: require('../src/vuelidate'),
+  vuetesting: require('../src/vuetesting'),
 };
 const wip = 'wip';
 
@@ -63,16 +64,25 @@ function createDatabase(docset, categories) {
   });
 }
 
-let categories, docset;
+let categories, docset, documents;
 switch(lib) {
   case 'quasar':
     categories = build[lib].getList(path.join(wip, lib));
     createDatabase(lib, categories);
     break;
   case 'vuelidate':
-    const documents = path.join(getResources(lib), 'Documents');
+    documents = path.join(getResources(lib), 'Documents');
     build[lib].getList(documents).then((categories) => {
       // docset = path.join(docsets, 'vuelidate.docset');
+      createDatabase(lib, categories);
+    });
+    break;
+  case 'vuetesting':
+    documents = path.join(getResources(lib), 'Documents', 'vue-testing-handbook');
+    console.log(documents)
+    build[lib].getList(documents).then((categories) => {
+      // docset = path.join(docsets, 'vuelidate.docset');
+      console.log(categories)
       createDatabase(lib, categories);
     });
     break;
